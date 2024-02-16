@@ -6,6 +6,7 @@ const path = require('path');
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
 const {authMiddleware} = require('./utils/auth');
+const cors = require('cors');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -20,12 +21,13 @@ const startApolloServer = async () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   
-  // app.use('/graphql', expressMiddleware(server, {
-  //   context: authMiddleware
-  // }));
+  app.use('/graphql', expressMiddleware(server, {
+    context: authMiddleware
+  }));
 
-  app.use('/graphql', expressMiddleware(server));
-
+  // Enable CORS for all routes
+  // app.use(cors());
+  // app.use('/graphql', expressMiddleware(server));
   // if we're in production, serve client/dist as static assets
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
